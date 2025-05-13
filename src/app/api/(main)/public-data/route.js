@@ -14,16 +14,16 @@ export async function POST(request) {
 
     const user = await checkLogin(authToken);
 
-    // if (!user) {
-    //   return NextResponse.json(
-    //     { status: "success", message: "Invalid request", data: null },
-    //     { status: 401 }
-    //   );
-    // }
+    if (!user) {
+      return NextResponse.json(
+        { status: "success", message: "Invalid request", data: null },
+        { status: 401 }
+      );
+    }
 
     const dataFromDb = await dbQuery(
-      `SELECT * from medical_report WHERE (age BETWEEN ? AND ?) AND gender=? AND medical_condition=? AND location=?`,
-      [ageMin, ageMax, gender, medicalCondition, location]
+      `SELECT * from medical_report WHERE (age BETWEEN ? AND ?) AND gender=? AND medical_condition LIKE ? AND location LIKE ?`,
+      [ageMin, ageMax, gender, `%${medicalCondition}%`, `%${location}%`]
     );
 
     if (dataFromDb.length == 0) {

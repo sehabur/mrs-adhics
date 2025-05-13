@@ -20,13 +20,13 @@ export async function sendOtpMailToUser(mailTo, otp) {
 
   const subject = "Account Creation OTP - MRS";
 
-  const mailBody = `<html><body><h3>New Account Creation</h3><p>Use the below OTP for account creration.</p><h1>${otp}</h1><br/><p>If you face any difficulties or need any assistance please contact us at <a href="mailto:kuetianshub@gmail.com">kuetianshub@gmail.com</a></p></body></html>`;
+  const mailBody = `<html><body><h3>New Account Creation</h3><p>Use the below OTP for account creration.</p><h1>${otp}</h1><br/><p>If you face any difficulties or need any assistance please contact us at <a href="mailto:${process.env.MAIL_USER}">${process.env.MAIL_USER}</a></p></body></html>`;
 
   try {
     return await transporter.sendMail({
       from: {
         name: "MRS-Test",
-        address: "kuetianshub@gmail.com",
+        address: process.env.MAIL_USER,
       },
       to: mailTo,
       subject,
@@ -44,7 +44,7 @@ export async function sendMailToUser(mailTo, subject, mailBody) {
     return await transporter.sendMail({
       from: {
         name: "MRS-Test",
-        address: "kuetianshub@gmail.com",
+        address: process.env.MAIL_USER,
       },
       to: mailTo,
       subject,

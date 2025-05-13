@@ -4,13 +4,22 @@ import { dbQuery } from "../../../../helpers/databaseHelper";
 
 export async function POST(request) {
   try {
-    const { name, emiratesId, email, jobTitle, workPlace, userId } =
+    const { name, emiratesId, email, jobTitle, workPlace, userId, accessType } =
       await request.json();
 
     const dataFromDb = await dbQuery(
-      `INSERT INTO access_request (name, emirates_id, email, job_title, work_place, user_id, request_status)
-                  VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [name, emiratesId, email, jobTitle, workPlace, userId, "pending"]
+      `INSERT INTO access_request (name, emirates_id, email, job_title, work_place, user_id, request_status, access_type)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        name,
+        emiratesId,
+        email,
+        jobTitle,
+        workPlace,
+        userId,
+        "pending",
+        accessType,
+      ]
     );
 
     return NextResponse.json(

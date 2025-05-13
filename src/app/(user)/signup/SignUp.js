@@ -134,7 +134,7 @@ export default function SignUp() {
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="email" sx={{ mb: 1 }}>
-                Emirates Id
+                Emirates Id (optional)
               </FormLabel>
               <TextField
                 id="emiratesId"

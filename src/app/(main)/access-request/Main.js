@@ -53,6 +53,7 @@ export default function Main() {
     });
   };
 
+  console.log(formData);
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -230,6 +231,27 @@ export default function Main() {
                   onChange={handleInputChange}
                   sx={{ width: 380 }}
                 />
+              </FormControl>
+            </Box>
+
+            <Box>
+              <FormControl>
+                <FormLabel sx={{ mb: 1 }}>Access Type</FormLabel>
+                <TextField
+                  id="accessType"
+                  name="accessType"
+                  select
+                  required
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  value={formData.accessType}
+                  onChange={handleInputChange}
+                  sx={{ width: 380 }}
+                >
+                  <MenuItem value="doctor">Doctor</MenuItem>
+                  <MenuItem value="researcher">Researcher</MenuItem>
+                </TextField>
               </FormControl>
             </Box>
 

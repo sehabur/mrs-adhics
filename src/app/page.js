@@ -22,7 +22,7 @@ export default function Home() {
             </Typography>
             <Button
               component={Link}
-              href="/admin"
+              href="/signup"
               variant="contained"
               sx={{ fontSize: "1.3rem", mt: 3, borderRadius: 8, px: 4 }}
             >
@@ -30,6 +30,7 @@ export default function Home() {
             </Button>
           </Box>
         </Box>
+        <Box sx={{ height: 200 }}></Box>
       </main>
     </div>
   );

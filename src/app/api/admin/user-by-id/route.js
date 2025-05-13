@@ -12,14 +12,14 @@ export async function GET(request) {
     const headersList = await headers();
     const authToken = headersList.get("Authorization");
 
-    // const isAdmin = await checkIsAdmin(authToken);
+    const isAdmin = await checkIsAdmin(authToken);
 
-    // if (!isAdmin) {
-    //   return NextResponse.json(
-    //     { status: "success", message: "Invalid credential", data: null },
-    //     { status: 401 }
-    //   );
-    // }
+    if (!isAdmin) {
+      return NextResponse.json(
+        { status: "success", message: "Invalid credential", data: null },
+        { status: 401 }
+      );
+    }
 
     const users = await dbQuery(
       `SELECT id, emirates_id, email, otp_verification_status, user_type from users WHERE id=? LIMIT 1`,
@@ -44,24 +44,30 @@ export async function GET(request) {
 
 export async function PATCH(request) {
   try {
-    const { id, otpVerificationStatus, userType } = await request.json();
+    const { userId, requestId, otpVerificationStatus, userType } =
+      await request.json();
 
     const headersList = await headers();
     const authToken = headersList.get("Authorization");
 
-    // const isAdmin = await checkIsAdmin(authToken);
+    const isAdmin = await checkIsAdmin(authToken);
 
-    // if (!isAdmin) {
-    //   return NextResponse.json(
-    //     { status: "success", message: "Invalid credential", data: null },
-    //     { status: 401 }
-    //   );
-    // }
+    if (!isAdmin) {
+      return NextResponse.json(
+        { status: "success", message: "Invalid credential", data: null },
+        { status: 401 }
+      );
+    }
 
     await dbQuery(
-      `UPDATE users SET otp_verification_status=? , user_type=? WHERE id=?`,
-      [otpVerificationStatus, userType, id]
+      `UPDATE users SET otp_verification_status=?, user_type=? WHERE id=?`,
+      [otpVerificationStatus, userType, userId]
     );
+
+    await dbQuery(`UPDATE access_request SET request_status=? WHERE id=?`, [
+      "resolved",
+      requestId,
+    ]);
 
     return NextResponse.json(
       { status: "success", message: "Update successful", data: null },

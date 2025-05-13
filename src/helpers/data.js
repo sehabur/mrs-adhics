@@ -1,36 +1,3 @@
-export const ageRanges = [
-  {
-    id: 1,
-    title: "0-5 (Infant)",
-    value: "infant",
-  },
-  {
-    id: 2,
-    title: "6-12 (Child)",
-    value: "child",
-  },
-  {
-    id: 4,
-    title: "13-21 (Teenager)",
-    value: "teenager",
-  },
-  {
-    id: 6,
-    title: "22-45 (Adult)",
-    value: "adult",
-  },
-  {
-    id: 7,
-    title: "46-65 (Middle-aged)",
-    value: "middle-aged",
-  },
-  {
-    id: 8,
-    title: "66+ (Senior Citizen)",
-    value: "senior-citizen",
-  },
-];
-
 export const gender = [
   {
     id: 1,
@@ -90,6 +57,11 @@ export const medicalConditions = [
     title: "Obesity",
     value: "obesity",
   },
+  {
+    id: 9,
+    title: "Dementia",
+    value: "dementia",
+  },
 ];
 
 export const uaeAreas = [
@@ -129,3 +101,36 @@ export const uaeAreas = [
     value: "umm-al-quwain",
   },
 ];
+
+// export const ageRanges = [
+//   {
+//     id: 1,
+//     title: "0-5 (Infant)",
+//     value: "infant",
+//   },
+//   {
+//     id: 2,
+//     title: "6-12 (Child)",
+//     value: "child",
+//   },
+//   {
+//     id: 4,
+//     title: "13-21 (Teenager)",
+//     value: "teenager",
+//   },
+//   {
+//     id: 6,
+//     title: "22-45 (Adult)",
+//     value: "adult",
+//   },
+//   {
+//     id: 7,
+//     title: "46-65 (Middle-aged)",
+//     value: "middle-aged",
+//   },
+//   {
+//     id: 8,
+//     title: "66+ (Senior Citizen)",
+//     value: "senior-citizen",
+//   },
+// ];

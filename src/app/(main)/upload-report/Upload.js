@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import Link from "next/link";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -12,14 +11,11 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 
 import LoadingSpinner from "../../../components/shared/LoadingSpinner";
-import { useRouter } from "next/navigation";
 import { Alert, MenuItem } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { authActions } from "../../../redux-store/store";
+import { useSelector } from "react-redux";
 import Grid from "@mui/material/Grid2";
 
-// import ReactQuill from "react-quill";
-// import "react-quill/dist/quill.snow.css";
+import pdfToText from "react-pdftotext";
 
 import { gender, medicalConditions, uaeAreas } from "../../../helpers/data";
 
@@ -37,6 +33,8 @@ export default function Upload() {
 
   const auth = useSelector((state) => state.auth);
 
+  const [uploadFile, setUploadFile] = React.useState(null);
+
   const handleInputChange = (event) => {
     setFormData({
       ...formData,
@@ -44,14 +42,27 @@ export default function Upload() {
     });
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
 
-    // console.log(formData);
+    setUploadFile(file);
+
+    pdfToText(file)
+      .then((text) => {
+        setFormData({
+          pdfText: text,
+        });
+      })
+      .catch((error) => console.error("Failed to extract text from pdf"));
+  };
+
+  const handleSubmit = async (event, type) => {
+    event.preventDefault();
 
     try {
       setIsLoading(true);
-      const res = await fetch(`/api/upload-report`, {
+
+      const res = await fetch(`/api/upload-report?type=${type}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,7 +73,19 @@ export default function Upload() {
 
       const data = await res.json();
 
-      if (res.ok) {
+      const fileFormData = new FormData();
+      fileFormData.append("file", uploadFile);
+      fileFormData.append("report_id", data.data.insertId);
+
+      const res2 = await fetch("/api/upload-pdf-file", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+        body: fileFormData,
+      });
+
+      if (res.ok && res2.ok) {
         setMessage({
           severity: "success",
           text: "Report upload successful",
@@ -83,6 +106,8 @@ export default function Upload() {
     }
   };
 
+  console.log(formData);
+
   return (
     <>
       <Box sx={{ maxWidth: 950, mx: "auto", py: 4 }}>
@@ -93,7 +118,7 @@ export default function Upload() {
         >
           <Typography
             component="h1"
-            sx={{ width: "100%", fontSize: "1.5rem", mb: 3 }}
+            sx={{ width: "100%", fontSize: "1.5rem", mb: 4 }}
           >
             Upload Report
           </Typography>
@@ -104,13 +129,62 @@ export default function Upload() {
             </Box>
           )}
 
+          <Box>
+            <Typography
+              component="h1"
+              sx={{ width: "100%", fontSize: "1.2rem", fontWeight: 700, mb: 2 }}
+            >
+              Upload PDF File
+            </Typography>
+
+            {/* <input
+              type="file"
+              id="file-upload"
+              accept="application/pdf"
+              onChange={extractText}
+              style={{ display: "none" }} // Hide default input
+            />
+
+            <label htmlFor="file-upload">
+              <Button variant="contained" component="span">
+                Select File
+              </Button>
+            </label> */}
+
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={handleFileChange}
+            />
+
+            <Box>
+              <Button
+                color="success"
+                variant="contained"
+                onClick={(e) => handleSubmit(e, "pdfUpload")}
+                sx={{ mt: 3 }}
+              >
+                Upload and Save
+              </Button>
+            </Box>
+          </Box>
+
+          <Divider sx={{ my: 4 }}>OR</Divider>
+
+          <Typography
+            component="h1"
+            sx={{ width: "100%", fontSize: "1.2rem", fontWeight: 700, mb: 2 }}
+          >
+            Entry Manual Data
+          </Typography>
+
           <Grid
             container
             rowSpacing={3}
             columnSpacing={2}
             justifyContent="flex-start"
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={(e) => handleSubmit(e, "manualEntry")}
           >
             <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl>

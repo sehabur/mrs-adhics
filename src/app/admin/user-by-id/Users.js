@@ -23,12 +23,13 @@ import { grey } from "@mui/material/colors";
 import Link from "next/link";
 import LoadingSpinner from "../../../components/shared/LoadingSpinner";
 
-export default function Users({ id }) {
+export default function Users({ requestId, userId }) {
   const [formData, setFormData] = React.useState({
-    id: id,
-    otpVerificationStatus: "",
-    userType: "",
+    requestId: requestId,
+    userId: userId,
   });
+
+  // console.log(requestId, userId);
 
   const auth = useSelector((state) => state.auth);
 
@@ -88,7 +89,7 @@ export default function Users({ id }) {
   async function getData() {
     setIsLoading(true);
 
-    const res = await fetch(`/api/admin/user-by-id?id=${id}`, {
+    const res = await fetch(`/api/admin/user-by-id?id=${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -98,36 +99,31 @@ export default function Users({ id }) {
     if (!res.ok) {
       throw new Error("Failed to fetch data");
     }
+
     const data = await res.json();
 
     setIsLoading(false);
 
+    console.log(data);
+
     setFormData({
-      id: id,
-      email: data.data.email,
-      emiratesId: data.data.emirates_id,
-      otpVerificationStatus: data.data.otp_verification_status,
-      userType: data.data.user_type,
+      userId: userId,
+      requestId: requestId,
+      email: data?.data?.email,
+      emiratesId: data?.data?.emirates_id,
+      otpVerificationStatus: data?.data?.otp_verification_status,
+      userType: data?.data?.user_type,
     });
+
     return;
   }
+
+  console.log(formData);
 
   React.useEffect(() => {
     getData();
   }, [auth]);
 
-  [
-    {
-      id: 1,
-      title: "0-2 (infant)",
-      value: "infant",
-    },
-    {
-      id: 2,
-      title: "3-5 (toddler)",
-      value: "toddler",
-    },
-  ];
   return (
     <>
       {isLoading && <LoadingSpinner />}
@@ -167,8 +163,9 @@ export default function Users({ id }) {
                 fullWidth
                 variant="outlined"
                 size="small"
-                value={formData.otpVerificationStatus}
+                defaultValue={formData.otpVerificationStatus}
                 onChange={handleInputChange}
+                key={formData.otpVerificationStatus}
               >
                 <MenuItem value="verified">Verified</MenuItem>
                 <MenuItem value="not_verified">Not Verified</MenuItem>
@@ -190,6 +187,7 @@ export default function Users({ id }) {
                 variant="outlined"
                 size="small"
                 value={formData.userType}
+                key={formData.userType}
                 onChange={handleInputChange}
               >
                 <MenuItem value="default">Default</MenuItem>

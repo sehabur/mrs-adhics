@@ -12,14 +12,14 @@ export async function GET(request) {
     const headersList = await headers();
     const authToken = headersList.get("Authorization");
 
-    // const isAdmin = await checkIsAdmin(authToken);
+    const isAdmin = await checkIsAdmin(authToken);
 
-    // if (!isAdmin) {
-    //   return NextResponse.json(
-    //     { status: "success", message: "Invalid credential", data: null },
-    //     { status: 401 }
-    //   );
-    // }
+    if (!isAdmin) {
+      return NextResponse.json(
+        { status: "success", message: "Invalid credential", data: null },
+        { status: 401 }
+      );
+    }
 
     const dataFromDb = await dbQuery(
       `SELECT * from access_request WHERE request_status=?`,

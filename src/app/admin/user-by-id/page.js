@@ -3,11 +3,12 @@ import React from "react";
 import Users from "./Users";
 
 export default async function Page({ searchParams }) {
-  const id = (await searchParams).id;
+  const userId = (await searchParams).user_id;
+  const requestId = (await searchParams).request_id;
 
   return (
     <>
-      <Users id={id} />
+      <Users requestId={requestId} userId={userId} />
     </>
   );
 }

@@ -17,12 +17,15 @@ import {
 
 import LoadingSpinner from "../../../components/shared/LoadingSpinner";
 import { useSelector } from "react-redux";
-import { grey } from "@mui/material/colors";
+import { grey, purple } from "@mui/material/colors";
+import { BarChart } from "@mui/x-charts";
 
 export default function Main() {
   const [formData, setFormData] = React.useState({});
 
   const [output, setOutput] = React.useState();
+
+  const [chartData, setChartData] = React.useState([]);
 
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -58,6 +61,35 @@ export default function Main() {
 
       if (res.ok) {
         setOutput(data.data);
+
+        const ageList = new Map();
+
+        for (let item of data?.data) {
+          if (ageList.has(item.age)) {
+            ageList.set(item.age, ageList.get(item.age) + 1);
+          } else {
+            ageList.set(item.age, 1);
+          }
+          // ageList.set(item.age, (ageList.get(item.age) || 0) + 1);
+        }
+
+        const listdata = Array.from(ageList).map((item) => {
+          return { age: item[0], people: item[1] };
+        });
+
+        listdata.sort((a, b) => a.age - b.age);
+
+        setChartData(listdata);
+
+        // sample data
+        // setChartData([
+        //   { age: 39, people: 5 },
+        //   { age: 48, people: 12 },
+        //   { age: 52, people: 21 },
+        //   { age: 56, people: 18 },
+        //   { age: 61, people: 15 },
+        //   { age: 65, people: 23 },
+        // ]);
       } else {
         setMessage({
           severity: "error",
@@ -76,10 +108,20 @@ export default function Main() {
     }
   };
 
-  console.log(output);
+  function maskString(inputString) {
+    const str = inputString.toString();
+
+    if (str.length <= 2) return str; // If string has 2 or fewer characters, return as is
+
+    const firstChar = str[0];
+    const lastChar = str[str.length - 1];
+    const masked = "*".repeat(str.length - 2); // Replace middle characters with "*"
+
+    return firstChar + masked + lastChar;
+  }
 
   return (
-    <Box sx={{ display: "flex", gap: 6, my: 3, maxWidth: 900, mx: "auto" }}>
+    <Box sx={{ display: "flex", gap: 6, my: 3, maxWidth: 1000, mx: "auto" }}>
       <Paper
         variant="outlined"
         sx={{
@@ -91,7 +133,7 @@ export default function Main() {
         }}
       >
         <Typography sx={{ fontSize: "1.2rem", fontWeight: 700, mb: 0.5 }}>
-          Public Medical Data Form
+          Medical Data Form
         </Typography>
         <Typography sx={{ fontSize: "1rem", mb: 3, color: "text.secondary" }}>
           Select the required information
@@ -230,7 +272,7 @@ export default function Main() {
       </Paper>
       <Box>
         <Typography sx={{ fontSize: "1.4rem", fontWeight: 700, mb: 3 }}>
-          Public Medical Data
+          Medical Data
         </Typography>
 
         {isLoading && (
@@ -239,36 +281,100 @@ export default function Main() {
           </Box>
         )}
 
-        {output && output.length > 0 ? (
+        {output && output.length > 0 && (
+          <>
+            <Box sx={{ mb: 1 }}>
+              <Typography>
+                Total number of patients found in the range:
+              </Typography>
+
+              <Typography fontWeight={700} fontSize="2rem">
+                {output.length}
+              </Typography>
+            </Box>
+
+            <BarChart
+              xAxis={[
+                {
+                  scaleType: "band",
+                  label: "Patient's age",
+                  data: chartData.map((d) => d.age),
+                },
+              ]}
+              yAxis={[
+                {
+                  label: "Number of patients",
+                },
+              ]}
+              series={[
+                {
+                  data: chartData.map((d) => d.people),
+                  valueFormatter: (value) => `${value}`,
+                },
+              ]}
+              colors={[purple[400]]}
+              width={500}
+              height={300}
+            />
+          </>
+        )}
+
+        {auth?.user_type !== "default" && output && output.length > 0 ? (
           output?.map((item) => (
-            <Paper
-              variant="outlined"
-              key={item.id}
-              sx={{
-                width: 550,
-                mb: 2,
-                p: 2,
-                borderRadius: 2,
-                bgcolor: grey[50],
-              }}
-            >
-              <Box sx={{ mb: 2 }}>
-                <Typography fontWeight={700}>Gender</Typography>
-                <Typography>{item.gender}</Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography fontWeight={700}>Age</Typography>
-                <Typography>{item.age}</Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography fontWeight={700}>Medical condition</Typography>
-                <Typography>{item.medical_condition}</Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography fontWeight={700}>Treatment result</Typography>
-                <Typography>{item.treatment_result}</Typography>
-              </Box>
-            </Paper>
+            <>
+              <Paper
+                variant="outlined"
+                key={item.id}
+                sx={{
+                  width: 600,
+                  mt: 2,
+                  mb: 3,
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: grey[100],
+                }}
+              >
+                <Box sx={{ mb: 2 }}>
+                  <Typography fontWeight={700}>Patient ID</Typography>
+                  <Typography>
+                    {["doctor", "researcher"].includes(auth?.user_type)
+                      ? item.patient_id
+                      : maskString(item.patient_id)}
+                  </Typography>
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                  <Typography fontWeight={700}>Gender</Typography>
+                  <Typography>{item.gender}</Typography>
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                  <Typography fontWeight={700}>Age</Typography>
+                  <Typography>{item.age}</Typography>
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                  <Typography fontWeight={700}>Medical condition</Typography>
+                  <Typography>{item.medical_condition}</Typography>
+                </Box>
+                {["doctor", "researcher"].includes(auth?.user_type) && (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography fontWeight={700}>Treatment result</Typography>
+                    <Typography>{item.treatment_result}</Typography>
+                  </Box>
+                )}
+
+                <Box sx={{ mb: 2 }}>
+                  <Typography fontWeight={700}>Diagnosis summary</Typography>
+                  {auth?.user_type == "default" && (
+                    <Typography>{item.summary_public}</Typography>
+                  )}
+                  {auth?.user_type == "doctor" && (
+                    <Typography>{item.summary_doctor}</Typography>
+                  )}
+                  {auth?.user_type == "researcher" && (
+                    <Typography>{item.summary_researcher}</Typography>
+                  )}
+                </Box>
+              </Paper>
+            </>
           ))
         ) : (
           <Typography>{message.text}</Typography>

@@ -26,12 +26,12 @@ const menu = [
     href: "/admin/all-users",
     icon: <PeopleIcon />,
   },
-  {
-    id: 2,
-    title: "Access requests",
-    href: "/admin/access-requests",
-    icon: <KeyIcon />,
-  },
+  // {
+  //   id: 2,
+  //   title: "Access requests",
+  //   href: "/admin/access-requests",
+  //   icon: <KeyIcon />,
+  // },
   {
     id: 3,
     title: "Pending access requests",
@@ -42,7 +42,7 @@ const menu = [
     id: 4,
     title: "Resolved access requests",
     href: "/admin/resolved-access-request",
-    icon: <FeedRoundedIcon />,
+    icon: <KeyIcon />,
   },
 ];
 
@@ -64,15 +64,12 @@ export default function RootLayout({ children }) {
           <Divider />
           <List>
             {menu.map((item, index) => (
-              <>
-                <ListItem key={item.id} disablePadding>
-                  <ListItemButton component={Link} href={item.href}>
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.title} />
-                  </ListItemButton>
-                </ListItem>
-                {/* <Divider /> */}
-              </>
+              <ListItem key={item.id} disablePadding>
+                <ListItemButton component={Link} href={item.href}>
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.title} />
+                </ListItemButton>
+              </ListItem>
             ))}
           </List>
         </Card>

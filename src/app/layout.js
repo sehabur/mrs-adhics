@@ -27,7 +27,10 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className={roboto.variable}>
+      <body
+        className={roboto.variable}
+        style={{ backgroundColor: "white", color: "black" }}
+      >
         <Provider store={storeRef.current}>
           <AppRouterCacheProvider>
             <ThemeProvider theme={theme}>

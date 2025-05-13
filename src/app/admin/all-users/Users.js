@@ -84,7 +84,7 @@ export default function Users() {
                       variant="outlined"
                       size="small"
                       component={Link}
-                      href={`/admin/user-by-id?id=${row.id}`}
+                      href={`/admin/user-by-id?user_id=${row.id}`}
                     >
                       Edit
                     </Button>

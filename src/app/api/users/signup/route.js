@@ -28,7 +28,7 @@ export async function POST(request) {
 
     const dataFromDb = await dbQuery(sql, values);
 
-    const data = await sendOtpMailToUser("sehabur@gmail.com", otp);
+    const data = await sendOtpMailToUser(email, otp);
 
     if (!data?.messageId) {
       return NextResponse.json(

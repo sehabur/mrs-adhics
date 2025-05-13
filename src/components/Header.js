@@ -9,24 +9,11 @@ import {
   AppBar,
   Box,
   Button,
-  Divider,
-  Popover,
   Toolbar,
   Typography,
-  useMediaQuery,
   useTheme,
-  IconButton,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  InputBase,
-  Fade,
-  Slide,
-  Drawer,
-  Avatar,
 } from "@mui/material";
 import { authActions } from "../redux-store/store";
-import { Router } from "next/router";
 
 export default function Header() {
   const dispatch = useDispatch();
@@ -114,48 +101,70 @@ export default function Header() {
             {auth && auth.user_type == "doctor" && (
               <Button
                 component={Link}
-                href="/upload"
+                href="/upload-report"
                 sx={{
                   px: 2,
                   borderRadius: 8,
                 }}
               >
-                Upload
+                Upload report
               </Button>
             )}
 
-            <Button
-              component={Link}
-              href="/reports"
-              sx={{
-                px: 2,
-                borderRadius: 8,
-              }}
-            >
-              Reports
-            </Button>
+            {auth && auth.user_type == "doctor" && (
+              <Button
+                component={Link}
+                href="/all-reports"
+                sx={{
+                  px: 2,
+                  borderRadius: 8,
+                }}
+              >
+                All reports
+              </Button>
+            )}
 
-            <Button
-              component={Link}
-              href="/dashboard"
-              sx={{
-                px: 2,
-                borderRadius: 8,
-              }}
-            >
-              Dashboard
-            </Button>
+            {auth && (
+              <>
+                <Button
+                  component={Link}
+                  href="/public-data-request"
+                  sx={{
+                    px: 2,
+                    borderRadius: 8,
+                  }}
+                >
+                  {auth.user_type == "doctor"
+                    ? "Doctor"
+                    : auth.user_type == "researcher"
+                    ? "Researcher"
+                    : "Public"}{" "}
+                  data
+                </Button>
 
-            <Button
-              component={Link}
-              href="/access-request"
-              sx={{
-                px: 2,
-                borderRadius: 8,
-              }}
-            >
-              Advanced access
-            </Button>
+                <Button
+                  component={Link}
+                  href="/dashboard"
+                  sx={{
+                    px: 2,
+                    borderRadius: 8,
+                  }}
+                >
+                  Dashboard
+                </Button>
+
+                <Button
+                  component={Link}
+                  href="/access-request"
+                  sx={{
+                    px: 2,
+                    borderRadius: 8,
+                  }}
+                >
+                  Advanced access
+                </Button>
+              </>
+            )}
 
             {!auth?.isLoggedIn && (
               <Button

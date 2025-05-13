@@ -15,6 +15,11 @@ import { grey } from "@mui/material/colors";
 import Link from "next/link";
 import LoadingSpinner from "../../../components/shared/LoadingSpinner";
 
+function capitalizeFirstLetter(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 export default function Request() {
   const auth = useSelector((state) => state.auth);
 
@@ -48,9 +53,7 @@ export default function Request() {
   return (
     <>
       {isLoading && <LoadingSpinner />}
-      <Typography
-        sx={{ fontSize: "1.6rem", fontWeight: 700, mb: 2, textAlign: "center" }}
-      >
+      <Typography sx={{ fontSize: "1.6rem", fontWeight: 700, mb: 2 }}>
         List of All Users
       </Typography>
       <Box>
@@ -63,6 +66,7 @@ export default function Request() {
                 <TableCell>Emirates Id</TableCell>
                 <TableCell>Job Title</TableCell>
                 <TableCell>Work Place</TableCell>
+                <TableCell>Access Type</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Action</TableCell>
               </TableRow>
@@ -78,13 +82,16 @@ export default function Request() {
                   <TableCell>{row.emirates_id}</TableCell>
                   <TableCell>{row.job_title}</TableCell>
                   <TableCell>{row.work_place}</TableCell>
+                  <TableCell>
+                    {capitalizeFirstLetter(row.access_type)}
+                  </TableCell>
                   <TableCell>{row.request_status}</TableCell>
                   <TableCell>
                     <Button
                       variant="outlined"
                       size="small"
                       component={Link}
-                      href={`/admin/user-by-id?id=${row.user_id}`}
+                      href={`/admin/user-by-id?user_id=${row.user_id}&request_id=${row.id}`}
                     >
                       Update
                     </Button>
